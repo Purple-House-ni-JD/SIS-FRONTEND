@@ -1,25 +1,27 @@
+import { useState } from 'react'
+import { EditModal } from '../../components/common/EditModal'
 import './adminPages.css'
 
 const SAMPLE_USERS = [
   { id: 1, name: 'Ana Reyes', email: 'ana.reyes@school.edu', role: 'student' },
-  { id: 2, name: 'Marco Santos', email: 'marco.santos@school.edu', role: 'staff' },
+  { id: 2, name: 'Marco Santos', email: 'marco.santos@school.edu', role: 'instructor' },
   { id: 3, name: 'System Admin', email: 'admin@school.edu', role: 'admin' },
 ]
 
 function roleClass(role) {
   if (role === 'student') return 'admin-tag admin-tag--student'
-  if (role === 'staff') return 'admin-tag admin-tag--staff'
+  if (role === 'instructor') return 'admin-tag admin-tag--instructor'
   return 'admin-tag admin-tag--admin'
 }
 
 export function AdminUsersPage() {
+  const [editingUser, setEditingUser] = useState(null)
+
   return (
     <article className="admin-page">
       <header className="admin-page__header">
         <h2 className="admin-page__title">User management</h2>
-        <p className="admin-page__lead">
-          CRUD for students and staff (and other roles your backend defines). JWT and RBAC apply on the server.
-        </p>
+        <p className="admin-page__lead">Static user view aligned with backend roles: admin, instructor, and student.</p>
       </header>
 
       <div className="admin-toolbar">
@@ -48,7 +50,11 @@ export function AdminUsersPage() {
                 </td>
                 <td>
                   <div className="admin-table__actions">
-                    <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm">
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--ghost admin-btn--sm"
+                      onClick={() => setEditingUser(u)}
+                    >
                       Edit
                     </button>
                     <button type="button" className="admin-btn admin-btn--danger admin-btn--sm">
@@ -61,6 +67,34 @@ export function AdminUsersPage() {
           </tbody>
         </table>
       </div>
+
+      <EditModal
+        isOpen={Boolean(editingUser)}
+        title={editingUser ? `Edit ${editingUser.name}` : 'Edit user'}
+        onClose={() => setEditingUser(null)}
+        onSubmit={() => setEditingUser(null)}
+      >
+        {editingUser ? (
+          <>
+            <label className="static-modal__label">
+              Name
+              <input className="static-modal__input" defaultValue={editingUser.name} />
+            </label>
+            <label className="static-modal__label">
+              Email
+              <input className="static-modal__input" defaultValue={editingUser.email} />
+            </label>
+            <label className="static-modal__label">
+              Role
+              <select className="static-modal__select" defaultValue={editingUser.role}>
+                <option value="student">Student</option>
+                <option value="instructor">Instructor</option>
+                <option value="admin">Admin</option>
+              </select>
+            </label>
+          </>
+        ) : null}
+      </EditModal>
     </article>
   )
 }

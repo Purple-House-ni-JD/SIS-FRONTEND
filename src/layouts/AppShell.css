@@ -1,0 +1,145 @@
+.sis-shell {
+  --sis-navy: #0a2342;
+  --sis-navy-soft: #0f3460;
+  --sis-gold: #f5b700;
+  --sis-gold-soft: #ffd54f;
+  --sis-surface: #f4f7fb;
+  --sis-card: #ffffff;
+  --sis-border: #d7e0ea;
+  --sis-text: #1c2b3a;
+  --sis-muted: #5a6f82;
+
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: var(--sis-surface);
+  color: var(--sis-text);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.sis-shell__aside {
+  background: linear-gradient(180deg, var(--sis-navy) 0%, var(--sis-navy-soft) 100%);
+  color: #e8eef5;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 3px solid var(--sis-gold);
+}
+
+.sis-shell__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sis-shell__mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--sis-gold) 0%, var(--sis-gold-soft) 100%);
+  box-shadow: 0 4px 14px rgba(245, 183, 0, 0.35);
+}
+
+.sis-shell__product {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+}
+
+.sis-shell__portal {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.sis-shell__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.sis-shell__link {
+  display: block;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  color: #dbe6f3;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sis-shell__link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.sis-shell__link--active {
+  background: rgba(245, 183, 0, 0.18);
+  color: #fff7d6;
+  box-shadow: inset 0 0 0 1px rgba(245, 183, 0, 0.45);
+}
+
+.sis-shell__logout {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sis-gold-soft);
+  text-decoration: none;
+}
+
+.sis-shell__logout:hover {
+  text-decoration: underline;
+}
+
+.sis-shell__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sis-shell__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.75rem;
+  background: var(--sis-card);
+  border-bottom: 1px solid var(--sis-border);
+}
+
+.sis-shell__page-title {
+  margin: 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: var(--sis-navy);
+}
+
+.sis-shell__content {
+  flex: 1;
+  padding: 1.75rem;
+  overflow: auto;
+}
+
+@media (max-width: 900px) {
+  .sis-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sis-shell__aside {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    border-right: none;
+    border-bottom: 3px solid var(--sis-gold);
+  }
+
+  .sis-shell__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}

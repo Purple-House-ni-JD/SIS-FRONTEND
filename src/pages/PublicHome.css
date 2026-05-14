@@ -1,0 +1,135 @@
+.sis-home {
+  --h-navy: #0a2342;
+  --h-gold: #f5b700;
+  --h-surface: #f4f7fb;
+
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(155deg, #0a2342 0%, #123a6b 52%, var(--h-surface) 52%);
+  color: #1c2b3a;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.sis-home__split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
+  gap: 2.5rem 3rem;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.sis-home__intro {
+  padding: 1.25rem 0 2rem;
+  color: #f0f5fb;
+}
+
+.sis-home__eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--h-gold);
+}
+
+.sis-home__title {
+  margin: 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2rem, 4.5vw, 3.15rem);
+  line-height: 1.2;
+  max-width: min(28rem, 100%);
+  font-style: italic;
+}
+
+.sis-home__auth {
+  position: relative;
+}
+
+.sis-home__auth-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.75rem 1.75rem 1.6rem;
+  border: 1px solid #d7e0ea;
+  box-shadow: 0 20px 50px rgba(10, 35, 66, 0.15);
+}
+
+.sis-home__auth-title {
+  margin: 0 0 1.1rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.45rem;
+  color: var(--h-navy);
+}
+
+.sis-home__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.sis-home__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--h-navy);
+}
+
+.sis-home__input {
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d7e0ea;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.sis-home__input:focus {
+  outline: 2px solid rgba(245, 183, 0, 0.65);
+  outline-offset: 1px;
+  border-color: #c9b36a;
+}
+
+.sis-home__submit {
+  margin-top: 0.25rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--h-navy);
+  background: linear-gradient(90deg, #ffd54f, var(--h-gold));
+  box-shadow: 0 4px 14px rgba(245, 183, 0, 0.35);
+}
+
+.sis-home__submit:hover {
+  filter: brightness(1.03);
+}
+
+@media (max-width: 880px) {
+  .sis-home {
+    background: linear-gradient(180deg, #0a2342 0%, #123a6b 36%, var(--h-surface) 36%);
+  }
+
+  .sis-home__split {
+    grid-template-columns: 1fr;
+    padding: 2.5rem 1.25rem 3rem;
+    align-items: start;
+  }
+
+  .sis-home__intro {
+    padding: 0 0 1rem;
+  }
+
+  .sis-home__title {
+    max-width: none;
+  }
+}

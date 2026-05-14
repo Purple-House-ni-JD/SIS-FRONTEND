@@ -1,0 +1,66 @@
+.sis-page {
+  max-width: 900px;
+}
+
+.sis-page__header {
+  margin-bottom: 1.5rem;
+}
+
+.sis-page__title {
+  margin: 0 0 0.35rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.35rem;
+  color: #0a2342;
+}
+
+.sis-page__hint {
+  margin: 0;
+  color: #5a6f82;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 55ch;
+}
+
+.sis-page__mock {
+  background: #fff;
+  border: 1px solid #d7e0ea;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(10, 35, 66, 0.06);
+}
+
+.sis-page__mock-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.sis-page__mock-row:last-child {
+  border-bottom: none;
+}
+
+.sis-page__mock-row--head {
+  background: linear-gradient(90deg, #0a2342, #0f3460);
+  padding: 0.65rem 1rem;
+  border-bottom: none;
+}
+
+.sis-page__mock-row--head .sis-page__cell {
+  height: 10px;
+  background: rgba(245, 183, 0, 0.45);
+}
+
+.sis-page__cell {
+  flex: 1;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8eef5, #f4f7fb);
+}
+
+.sis-page__footnote {
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+  color: #8a9bab;
+}

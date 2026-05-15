@@ -2,27 +2,33 @@ import { useState } from 'react'
 import { EditModal } from '../../components/common/EditModal'
 import { PortalGrid, PortalKeyValueList, PortalPageHeader, PortalSection, PortalTable } from '../../components/portal/PortalComponents'
 
-const courseRows = [
+const gradeRows = [
   {
     id: 1,
-    code: 'CS201',
-    title: 'Data Structures',
-    description: 'Core programming structures and algorithms.',
-    created_at: '2026-05-10',
+    enrollment: 'ENR-2026-001',
+    student_name: 'Alyssa Mendoza',
+    course_title: 'CS201 - Data Structures',
+    score: '96',
+    remarks: 'Passed',
+    updated_at: '2026-05-10',
   },
   {
     id: 2,
-    code: 'IT204',
-    title: 'Web Systems',
-    description: 'Frontend and backend integration.',
-    created_at: '2026-05-11',
+    enrollment: 'ENR-2026-004',
+    student_name: 'Joshua Tan',
+    course_title: 'CS201 - Data Structures',
+    score: '88',
+    remarks: 'Passed',
+    updated_at: '2026-05-11',
   },
   {
     id: 3,
-    code: 'CS202',
-    title: 'Algorithms',
-    description: 'Design and analysis of algorithms.',
-    created_at: '2026-05-12',
+    enrollment: 'ENR-2026-009',
+    student_name: 'Mika Rivera',
+    course_title: 'IT204 - Web Systems',
+    score: '82',
+    remarks: 'Passed',
+    updated_at: '2026-05-12',
   },
 ]
 
@@ -33,18 +39,19 @@ const profileItems = [
 ]
 
 export function StaffGradingPage() {
-  const [editingCourse, setEditingCourse] = useState(null)
+  const [editingGrade, setEditingGrade] = useState(null)
 
   const columns = [
-    { key: 'code', label: 'Code' },
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'created_at', label: 'Created at' },
+    { key: 'student_name', label: 'Student' },
+    { key: 'course_title', label: 'Course' },
+    { key: 'score', label: 'Score' },
+    { key: 'remarks', label: 'Remarks' },
+    { key: 'updated_at', label: 'Updated at' },
     {
       key: 'actions',
       label: 'Actions',
       render: (row) => (
-        <button type="button" className="portal-link portal-link--button" onClick={() => setEditingCourse(row)}>
+        <button type="button" className="portal-link portal-link--button" onClick={() => setEditingGrade(row)}>
           Edit
         </button>
       ),
@@ -55,8 +62,8 @@ export function StaffGradingPage() {
     <article className="portal-page">
       <PortalPageHeader
         eyebrow="Instructor"
-        title="Courses"
-        description="Simple instructor course list based on the backend course serializer."
+        title="Gradebook"
+        description="Instructor grade view aligned with the backend grade serializer and instructor-only grading rules."
       />
 
       <PortalGrid>
@@ -64,36 +71,37 @@ export function StaffGradingPage() {
           <PortalKeyValueList items={profileItems} />
         </PortalSection>
 
-        <PortalSection title="Advisory note" description="Static frontend for now.">
+        <PortalSection title="Advisory note" description="Frontend aligned to instructor grade permissions.">
           <p className="portal-note">
-            Once connected, instructors can read the courses filtered by `request.user` from the backend course viewset.
+            The backend grade logic only allows instructors to see and update grades for students in their own courses, so this page
+            is organized as a gradebook instead of a general course list.
           </p>
         </PortalSection>
       </PortalGrid>
 
-      <PortalSection title="Assigned courses" description="Read-only instructor course view.">
-        <PortalTable columns={columns} rows={courseRows} />
+      <PortalSection title="Managed grades" description="Grade records for instructor-owned courses.">
+        <PortalTable columns={columns} rows={gradeRows} />
       </PortalSection>
 
       <EditModal
-        isOpen={Boolean(editingCourse)}
-        title={editingCourse ? `Edit ${editingCourse.code}` : 'Edit course'}
-        onClose={() => setEditingCourse(null)}
-        onSubmit={() => setEditingCourse(null)}
+        isOpen={Boolean(editingGrade)}
+        title={editingGrade ? `Edit grade for ${editingGrade.student_name}` : 'Edit grade'}
+        onClose={() => setEditingGrade(null)}
+        onSubmit={() => setEditingGrade(null)}
       >
-        {editingCourse ? (
+        {editingGrade ? (
           <>
             <label className="static-modal__label">
-              Code
-              <input className="static-modal__input" defaultValue={editingCourse.code} />
+              Enrollment
+              <input className="static-modal__input" defaultValue={editingGrade.enrollment} readOnly />
             </label>
             <label className="static-modal__label">
-              Title
-              <input className="static-modal__input" defaultValue={editingCourse.title} />
+              Score
+              <input className="static-modal__input" defaultValue={editingGrade.score} />
             </label>
             <label className="static-modal__label">
-              Description
-              <textarea className="static-modal__textarea" defaultValue={editingCourse.description} />
+              Remarks
+              <textarea className="static-modal__textarea" defaultValue={editingGrade.remarks} />
             </label>
           </>
         ) : null}

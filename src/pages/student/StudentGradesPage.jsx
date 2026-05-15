@@ -3,38 +3,42 @@ import { PortalGrid, PortalKeyValueList, PortalPageHeader, PortalSection, Portal
 const courseRows = [
   {
     id: 1,
-    code: 'CS201',
-    title: 'Data Structures',
-    description: 'Core programming structures and algorithms.',
-    instructor: 'Marco Santos',
+    enrollment: 'ENR-2026-001',
+    course_title: 'CS201 - Data Structures',
+    score: '96',
+    remarks: 'Passed',
+    updated_at: '2026-05-10',
   },
   {
     id: 2,
-    code: 'MATH122',
-    title: 'Discrete Mathematics',
-    description: 'Logic, sets, relations, and proofs.',
-    instructor: 'Lea Ramos',
+    enrollment: 'ENR-2026-002',
+    course_title: 'MATH122 - Discrete Mathematics',
+    score: '91',
+    remarks: 'Passed',
+    updated_at: '2026-05-11',
   },
   {
     id: 3,
-    code: 'ENG210',
-    title: 'Technical Writing',
-    description: 'Clear documentation and formal writing.',
-    instructor: 'Anne Cruz',
+    enrollment: 'ENR-2026-003',
+    course_title: 'ENG210 - Technical Writing',
+    score: '89',
+    remarks: 'Passed',
+    updated_at: '2026-05-12',
   },
 ]
 
 const summaryItems = [
   { label: 'Student ID', value: '2026-00124' },
   { label: 'Program', value: 'BS Information Technology' },
-  { label: 'Year level', value: '2' },
+  { label: 'Posted grades', value: '3' },
 ]
 
 const columns = [
-  { key: 'code', label: 'Code' },
-  { key: 'title', label: 'Title' },
-  { key: 'description', label: 'Description' },
-  { key: 'instructor', label: 'Instructor' },
+  { key: 'enrollment', label: 'Enrollment' },
+  { key: 'course_title', label: 'Course' },
+  { key: 'score', label: 'Score' },
+  { key: 'remarks', label: 'Remarks' },
+  { key: 'updated_at', label: 'Updated at' },
 ]
 
 export function StudentGradesPage() {
@@ -42,8 +46,8 @@ export function StudentGradesPage() {
     <article className="portal-page">
       <PortalPageHeader
         eyebrow="Student"
-        title="My courses"
-        description="Simple course list based on the backend course serializer fields: code, title, description, and instructor."
+        title="My grades"
+        description="Student grade view aligned with the backend grade serializer: enrollment, course_title, score, remarks, and updated_at."
       />
 
       <PortalGrid>
@@ -51,14 +55,15 @@ export function StudentGradesPage() {
           <PortalKeyValueList items={summaryItems} />
         </PortalSection>
 
-        <PortalSection title="Advisory note" description="Static frontend for now.">
+        <PortalSection title="Advisory note" description="Frontend aligned to the backend grade implementation.">
           <p className="portal-note">
-            When the API is connected, this page can read directly from the course list returned for the logged-in student.
+            The backend grade viewset already filters records by the logged-in student, so this page is structured to show only the
+            student&apos;s own grades.
           </p>
         </PortalSection>
       </PortalGrid>
 
-      <PortalSection title="Enrolled courses" description="Read-only student course view.">
+      <PortalSection title="Posted grades" description="Read-only student grade records.">
         <PortalTable columns={columns} rows={courseRows} />
       </PortalSection>
     </article>

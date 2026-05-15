@@ -33,8 +33,8 @@ export function StaffDashboard() {
         title="Instructor dashboard"
         description="Simple instructor view based on backend users, instructor profiles, courses, and announcements."
         actions={
-          <Link to="/instructor/courses" className="portal-link">
-            View courses
+          <Link to="/instructor/grades" className="portal-link">
+            Open gradebook
           </Link>
         }
       />

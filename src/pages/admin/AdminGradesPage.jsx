@@ -2,27 +2,51 @@ import { useState } from 'react'
 import { EditModal } from '../../components/common/EditModal'
 import './adminPages.css'
 
-const SAMPLE_COURSES = [
-  { id: 1, code: 'CS201', title: 'Data Structures', instructor: 'Marco Santos', created_at: '2026-05-10' },
-  { id: 2, code: 'IT204', title: 'Web Systems', instructor: 'Lea Ramos', created_at: '2026-05-11' },
-  { id: 3, code: 'ENG210', title: 'Technical Writing', instructor: 'Anne Cruz', created_at: '2026-05-12' },
+const SAMPLE_GRADES = [
+  {
+    id: 1,
+    enrollment: 'ENR-2026-001',
+    student_name: 'Alyssa Mendoza',
+    course_title: 'CS201 - Data Structures',
+    score: '96',
+    remarks: 'Passed',
+    updated_at: '2026-05-10',
+  },
+  {
+    id: 2,
+    enrollment: 'ENR-2026-004',
+    student_name: 'Joshua Tan',
+    course_title: 'IT204 - Web Systems',
+    score: '88',
+    remarks: 'Passed',
+    updated_at: '2026-05-11',
+  },
+  {
+    id: 3,
+    enrollment: 'ENR-2026-009',
+    student_name: 'Mika Rivera',
+    course_title: 'ENG210 - Technical Writing',
+    score: '82',
+    remarks: 'Passed',
+    updated_at: '2026-05-12',
+  },
 ]
 
 export function AdminGradesPage() {
-  const [editingCourse, setEditingCourse] = useState(null)
+  const [editingGrade, setEditingGrade] = useState(null)
 
   return (
     <article className="admin-page">
       <header className="admin-page__header">
-        <h2 className="admin-page__title">Courses</h2>
+        <h2 className="admin-page__title">Grades</h2>
         <p className="admin-page__lead">
-          Static admin course view based on the backend course serializer and instructor assignment.
+          Admin grade view aligned with the backend grade serializer for system-wide records.
         </p>
       </header>
 
       <div className="admin-toolbar">
         <button type="button" className="admin-btn admin-btn--primary">
-          Add course
+          Record grade
         </button>
       </div>
 
@@ -30,26 +54,30 @@ export function AdminGradesPage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Title</th>
-              <th>Instructor</th>
-              <th>Created at</th>
+              <th>Enrollment</th>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Score</th>
+              <th>Remarks</th>
+              <th>Updated at</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {SAMPLE_COURSES.map((course) => (
-              <tr key={course.id}>
-                <td>{course.code}</td>
-                <td>{course.title}</td>
-                <td>{course.instructor}</td>
-                <td>{course.created_at}</td>
+            {SAMPLE_GRADES.map((grade) => (
+              <tr key={grade.id}>
+                <td>{grade.enrollment}</td>
+                <td>{grade.student_name}</td>
+                <td>{grade.course_title}</td>
+                <td>{grade.score}</td>
+                <td>{grade.remarks}</td>
+                <td>{grade.updated_at}</td>
                 <td>
                   <div className="admin-table__actions">
                     <button
                       type="button"
                       className="admin-btn admin-btn--ghost admin-btn--sm"
-                      onClick={() => setEditingCourse(course)}
+                      onClick={() => setEditingGrade(grade)}
                     >
                       Edit
                     </button>
@@ -65,24 +93,24 @@ export function AdminGradesPage() {
       </div>
 
       <EditModal
-        isOpen={Boolean(editingCourse)}
-        title={editingCourse ? `Edit ${editingCourse.code}` : 'Edit course'}
-        onClose={() => setEditingCourse(null)}
-        onSubmit={() => setEditingCourse(null)}
+        isOpen={Boolean(editingGrade)}
+        title={editingGrade ? `Edit grade for ${editingGrade.student_name}` : 'Edit grade'}
+        onClose={() => setEditingGrade(null)}
+        onSubmit={() => setEditingGrade(null)}
       >
-        {editingCourse ? (
+        {editingGrade ? (
           <>
             <label className="static-modal__label">
-              Code
-              <input className="static-modal__input" defaultValue={editingCourse.code} />
+              Enrollment
+              <input className="static-modal__input" defaultValue={editingGrade.enrollment} readOnly />
             </label>
             <label className="static-modal__label">
-              Title
-              <input className="static-modal__input" defaultValue={editingCourse.title} />
+              Score
+              <input className="static-modal__input" defaultValue={editingGrade.score} />
             </label>
             <label className="static-modal__label">
-              Instructor
-              <input className="static-modal__input" defaultValue={editingCourse.instructor} />
+              Remarks
+              <input className="static-modal__input" defaultValue={editingGrade.remarks} />
             </label>
           </>
         ) : null}

@@ -22,7 +22,7 @@ export default function App() {
 
       <Route path="/student" element={<AppShell portal="student" title="Student" nav={portalNav.student} />}>
         <Route index element={<StudentDashboard />} />
-        <Route path="courses" element={<StudentGradesPage />} />
+        <Route path="grades" element={<StudentGradesPage />} />
         <Route path="announcements" element={<StudentAnnouncementsPage />} />
         <Route path="profile" element={<StudentProfilePage />} />
       </Route>
@@ -32,7 +32,7 @@ export default function App() {
         element={<AppShell portal="instructor" title="Instructor" nav={portalNav.instructor} />}
       >
         <Route index element={<StaffDashboard />} />
-        <Route path="courses" element={<StaffGradingPage />} />
+        <Route path="grades" element={<StaffGradingPage />} />
         <Route path="announcements" element={<StaffAnnouncementsPage />} />
         <Route path="profile" element={<StaffProfilePage />} />
       </Route>
@@ -40,7 +40,7 @@ export default function App() {
       <Route path="/admin" element={<AppShell portal="admin" title="Admin" nav={portalNav.admin} />}>
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsersPage />} />
-        <Route path="courses" element={<AdminGradesPage />} />
+        <Route path="grades" element={<AdminGradesPage />} />
         <Route path="announcements" element={<AdminAnnouncementsPage />} />
       </Route>
 

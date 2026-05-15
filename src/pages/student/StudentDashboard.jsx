@@ -33,8 +33,8 @@ export function StudentDashboard() {
         title="Student dashboard"
         description="Simple student view based on backend records for enrollments, grades, profile data, and announcements."
         actions={
-          <Link to="/student/courses" className="portal-link">
-            View my courses
+          <Link to="/student/grades" className="portal-link">
+            View my grades
           </Link>
         }
       />

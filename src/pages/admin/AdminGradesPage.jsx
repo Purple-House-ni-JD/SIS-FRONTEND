@@ -74,7 +74,7 @@ export function AdminGradesPage() {
                     <button
                       type="button"
                       className="admin-btn admin-btn--ghost admin-btn--sm"
-                      onClick={() => setEditingGrade(grade)}
+                      onClick={() => setEditingCourse(course)}
                     >
                       Edit
                     </button>
@@ -169,7 +169,7 @@ export function AdminGradesPage() {
           }
         }}
       >
-        {editingGrade ? (
+        {editingCourse ? (
           <>
             <label className="static-modal__label">
               Code

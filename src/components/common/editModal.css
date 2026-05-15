@@ -69,6 +69,15 @@
   font-weight: 600;
 }
 
+.static-modal__label2 {
+  display: flex;
+  flex-direction: row;
+  gap: 0.35rem;
+  color: #0a2342;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 .static-modal__input,
 .static-modal__textarea,
 .static-modal__select {

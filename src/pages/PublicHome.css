@@ -47,6 +47,31 @@
   font-style: italic;
 }
 
+.sis-home__subtitle {
+  margin: 1rem 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 36rem;
+  color: rgba(240, 245, 251, 0.88);
+}
+
+.sis-home__lead {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #5a6f82;
+}
+
+.sis-home__footer-link {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+}
+
+.sis-home__footer-link a {
+  color: #123a6b;
+  font-weight: 600;
+}
+
 .sis-home__auth {
   position: relative;
 }
@@ -137,6 +162,24 @@
 
 .sis-home__submit:hover {
   filter: brightness(1.03);
+}
+
+.sis-home__error {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fde8e8;
+  color: #9b1c1c;
+}
+
+.sis-home__success {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #e6f7ed;
+  color: #0d5c2f;
 }
 
 @media (max-width: 880px) {

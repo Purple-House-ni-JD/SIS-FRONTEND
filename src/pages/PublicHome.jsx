@@ -1,16 +1,23 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getPortalPath } from '../data/portalConfig'
-import './PublicHome.css'
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  fetchMe,
+  loginJwt,
+  logout,
+  portalPathForRole,
+} from "../services/authService";
+import "./PublicHome.css";
 
-const SCHOOL_MOTTO = 'Learn with purpose. Lead with integrity.'
+const SCHOOL_MOTTO = "Learn with purpose. Lead with integrity.";
 
 export function PublicHome() {
-  const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('regular')
-  const [selectedRole, setSelectedRole] = useState('instructor')
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState("regular");
+  const [authError, setAuthError] = useState("");
+  const activated = searchParams.get("activated") === "1";
 
-  const isAdmin = activeTab === 'admin'
+  const isAdmin = activeTab === "admin";
 
   return (
     <div className="sis-home">
@@ -26,22 +33,32 @@ export function PublicHome() {
               Sign in
             </h2>
 
-            <div className="sis-home__tabs" role="tablist" aria-label="Sign in type">
+            <div
+              className="sis-home__tabs"
+              role="tablist"
+              aria-label="Sign in type"
+            >
               <button
                 type="button"
                 role="tab"
-                aria-selected={activeTab === 'regular'}
-                className={`sis-home__tab${activeTab === 'regular' ? ' sis-home__tab--active' : ''}`}
-                onClick={() => setActiveTab('regular')}
+                aria-selected={activeTab === "regular"}
+                className={`sis-home__tab${activeTab === "regular" ? " sis-home__tab--active" : ""}`}
+                onClick={() => {
+                  setActiveTab("regular");
+                  setAuthError("");
+                }}
               >
                 Regular users
               </button>
               <button
                 type="button"
                 role="tab"
-                aria-selected={activeTab === 'admin'}
-                className={`sis-home__tab${activeTab === 'admin' ? ' sis-home__tab--active' : ''}`}
-                onClick={() => setActiveTab('admin')}
+                aria-selected={activeTab === "admin"}
+                className={`sis-home__tab${activeTab === "admin" ? " sis-home__tab--active" : ""}`}
+                onClick={() => {
+                  setActiveTab("admin");
+                  setAuthError("");
+                }}
               >
                 Administrator
               </button>
@@ -49,34 +66,59 @@ export function PublicHome() {
 
             <form
               className="sis-home__form"
-              onSubmit={(e) => {
-                e.preventDefault()
-                navigate(isAdmin ? '/admin' : getPortalPath(selectedRole))
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setAuthError("");
+                const fd = new FormData(e.currentTarget);
+                const email = String(fd.get("email") || "").trim();
+                const password = String(fd.get("password") || "");
+                if (!email || !password) {
+                  setAuthError("Email and password are required.");
+                  return;
+                }
+                try {
+                  await loginJwt(email, password);
+                  const me = await fetchMe();
+                  if (isAdmin && me.role !== "admin") {
+                    logout();
+                    setAuthError("That account is not an administrator.");
+                    return;
+                  }
+                  navigate(portalPathForRole(me.role));
+                } catch (err) {
+                  setAuthError(err.message || "Sign-in failed.");
+                }
               }}
             >
-              {!isAdmin ? (
-                <label className="sis-home__label">
-                  Role
-                  <select
-                    className="sis-home__input"
-                    name="role"
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                  >
-                    <option value="instructor">Instructor</option>
-                    <option value="student">Student</option>
-                  </select>
-                </label>
+              {activated ? (
+                <p className="sis-home__success" role="status">
+                  Your email is verified. You can sign in below.
+                </p>
+              ) : null}
+              {authError ? (
+                <p className="sis-home__error">{authError}</p>
               ) : null}
 
               <label className="sis-home__label">
-                Username
-                <input className="sis-home__input" name="username" type="text" autoComplete="username" />
+                Email
+                <input
+                  className="sis-home__input"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                />
               </label>
 
               <label className="sis-home__label">
                 Password
-                <input className="sis-home__input" name="password" type="password" autoComplete="current-password" />
+                <input
+                  className="sis-home__input"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                />
               </label>
 
               <button type="submit" className="sis-home__submit">
@@ -87,5 +129,5 @@ export function PublicHome() {
         </section>
       </div>
     </div>
-  )
+  );
 }

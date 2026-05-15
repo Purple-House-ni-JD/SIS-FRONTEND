@@ -18,10 +18,9 @@ export function EditModal({ isOpen, title, onClose, onSubmit, children }) {
           className="static-modal__form"
           onSubmit={(e) => {
             e.preventDefault()
-            onSubmit()
+            onSubmit?.(e)
           }}
         >
-          <p className="static-modal__note">Changes here are not saved yet.</p>
           {children}
           <div className="static-modal__actions">
             <button type="button" className="static-modal__btn static-modal__btn--ghost" onClick={onClose}>

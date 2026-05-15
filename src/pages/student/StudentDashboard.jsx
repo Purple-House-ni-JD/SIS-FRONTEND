@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   PortalGrid,
@@ -6,43 +7,80 @@ import {
   PortalPageHeader,
   PortalSection,
 } from '../../components/portal/PortalComponents'
-
-const summary = [
-  { label: 'Enrolled courses', value: '3', hint: 'Based on current enrollment records.' },
-  { label: 'Posted grades', value: '2', hint: 'Courses with recorded grade entries.' },
-  { label: 'Announcements', value: '3', hint: 'Latest school announcements.' },
-]
-
-const enrolledCourses = [
-  { id: 1, title: 'CS201 - Data Structures', meta: 'Instructor: Marco Santos', room: 'Enrolled' },
-  { id: 2, title: 'MATH122 - Discrete Mathematics', meta: 'Instructor: Lea Ramos', room: 'Enrolled' },
-  { id: 3, title: 'ENG210 - Technical Writing', meta: 'Instructor: Anne Cruz', room: 'Enrolled' },
-]
-
-const reminders = [
-  { id: 1, title: 'Check announcements', body: 'Review the latest school updates from the portal.' },
-  { id: 2, title: 'Review course list', body: 'Make sure your enrolled subjects match your registration.' },
-  { id: 3, title: 'Update profile', body: 'Keep your student profile information complete.' },
-]
+import { unwrapList } from '../../lib/apiClient'
+import * as announcementsService from '../../services/announcementsService'
+import * as coursesService from '../../services/coursesService'
+import * as gradesService from '../../services/gradesService'
+import { useMountLoad } from '../../lib/useMountLoad'
 
 export function StudentDashboard() {
+  const [courses, setCourses] = useState([])
+  const [grades, setGrades] = useState([])
+  const [announcements, setAnnouncements] = useState([])
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  const load = useCallback(async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const [c, g, a] = await Promise.all([
+        coursesService.listCourses(),
+        gradesService.listGrades(),
+        announcementsService.listAnnouncements(),
+      ])
+      setCourses(unwrapList(c))
+      setGrades(unwrapList(g))
+      setAnnouncements(unwrapList(a))
+    } catch (e) {
+      setError(e.message || 'Failed to load dashboard')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useMountLoad(load)
+
+  const summary = [
+    { label: 'Enrolled courses', value: String(courses.length), hint: 'Courses linked to your enrollments.' },
+    { label: 'Posted grades', value: String(grades.length), hint: 'Grade rows visible to you.' },
+    { label: 'Announcements', value: String(announcements.length), hint: 'Posts in the feed.' },
+  ]
+
+  const enrolledCourses = courses.map((c) => ({
+    id: c.id,
+    title: `${c.code} — ${c.title}`,
+    meta: `Instructor: ${c.instructor_name}`,
+    room: 'Enrolled',
+  }))
+
+  const gradeItems = grades.map((g) => ({
+    id: g.id,
+    title: g.course_title,
+    meta: `Score: ${g.score} · ${g.remarks}`,
+    room: 'Graded',
+  }))
+
   return (
     <article className="portal-page">
       <PortalPageHeader
         eyebrow="Student"
         title="Student dashboard"
-        description="Simple student view based on backend records for enrollments, grades, profile data, and announcements."
+        description="Counts and lists loaded from the API for your account."
         actions={
-          <Link to="/student/grades" className="portal-link">
-            View my grades
+          <Link to="/student/courses" className="portal-link">
+            Courses & grades
           </Link>
         }
       />
 
+      {error ? <p className="portal-page__error">{error}</p> : null}
+      {loading ? <p className="portal-page__description">Loading…</p> : null}
+
       <PortalMetricGrid items={summary} />
 
       <PortalGrid>
-        <PortalSection title="Enrolled courses" description="Sample course records using backend course fields.">
+        <PortalSection title="Enrolled courses" description="From the course endpoint.">
           <PortalList
             items={enrolledCourses}
             renderItem={(item) => (
@@ -57,16 +95,23 @@ export function StudentDashboard() {
           />
         </PortalSection>
 
-        <PortalSection title="Reminders" description="Simple placeholders for student-side actions.">
-          <PortalList
-            items={reminders}
-            renderItem={(item) => (
-              <>
-                <h4 className="portal-item__title">{item.title}</h4>
-                <p className="portal-item__body">{item.body}</p>
-              </>
-            )}
-          />
+        <PortalSection title="Posted grades" description="Latest grades visible to you.">
+          {gradeItems.length ? (
+            <PortalList
+              items={gradeItems}
+              renderItem={(item) => (
+                <>
+                  <div className="portal-item__title-row">
+                    <h4 className="portal-item__title">{item.title}</h4>
+                    <span className="portal-chip portal-chip--green">{item.room}</span>
+                  </div>
+                  <p className="portal-item__meta">{item.meta}</p>
+                </>
+              )}
+            />
+          ) : (
+            <p className="portal-page__description">No grades posted yet.</p>
+          )}
         </PortalSection>
       </PortalGrid>
     </article>

@@ -4,6 +4,15 @@
   gap: 1.25rem;
 }
 
+.portal-page__error {
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: #fde8e8;
+  color: #9b1c1c;
+}
+
 .portal-page__header {
   display: flex;
   align-items: flex-start;

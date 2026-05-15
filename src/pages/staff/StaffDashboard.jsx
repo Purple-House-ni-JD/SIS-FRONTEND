@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   PortalGrid,
@@ -6,32 +7,66 @@ import {
   PortalPageHeader,
   PortalSection,
 } from '../../components/portal/PortalComponents'
-
-const summary = [
-  { label: 'Assigned courses', value: '3', hint: 'Courses where this instructor is assigned.' },
-  { label: 'Announcements', value: '3', hint: 'Recent instructor-created announcements.' },
-  { label: 'Department', value: 'Computing', hint: 'From the instructor profile.' },
-]
-
-const courseLoad = [
-  { id: 1, title: 'CS201 - Data Structures', meta: 'Description: Core programming structures.', status: 'Active' },
-  { id: 2, title: 'IT204 - Web Systems', meta: 'Description: Frontend and backend integration.', status: 'Active' },
-  { id: 3, title: 'CS202 - Algorithms', meta: 'Description: Design and analysis of algorithms.', status: 'Active' },
-]
-
-const tasks = [
-  { id: 1, title: 'Review enrollments', body: 'Check which students are enrolled in your assigned courses.' },
-  { id: 2, title: 'Update course descriptions', body: 'Keep course information aligned with the backend course records.' },
-  { id: 3, title: 'Post announcement', body: 'Create a simple class update for your students.' },
-]
+import { unwrapList } from '../../lib/apiClient'
+import * as announcementsService from '../../services/announcementsService'
+import * as authService from '../../services/authService'
+import * as coursesService from '../../services/coursesService'
+import { useMountLoad } from '../../lib/useMountLoad'
 
 export function StaffDashboard() {
+  const [me, setMe] = useState(null)
+  const [courses, setCourses] = useState([])
+  const [announcements, setAnnouncements] = useState([])
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  const load = useCallback(async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const [user, c, a] = await Promise.all([
+        authService.fetchMe(),
+        coursesService.listCourses(),
+        announcementsService.listAnnouncements(),
+      ])
+      setMe(user)
+      setCourses(unwrapList(c))
+      setAnnouncements(unwrapList(a))
+    } catch (e) {
+      setError(e.message || 'Failed to load dashboard')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useMountLoad(load)
+
+  const dept = me?.instructor_profile?.department ?? '—'
+  const summary = [
+    { label: 'Assigned courses', value: String(courses.length), hint: 'Courses where you are the instructor of record.' },
+    { label: 'Announcements', value: String(announcements.length), hint: 'Posts visible to you.' },
+    { label: 'Department', value: dept, hint: 'From your instructor profile.' },
+  ]
+
+  const courseLoad = courses.map((c) => ({
+    id: c.id,
+    title: `${c.code} — ${c.title}`,
+    meta: c.description ? `Description: ${c.description}` : 'No description',
+    status: 'Active',
+  }))
+
+  const tasks = [
+    { id: 1, title: 'Review enrollments', body: 'Check which students are enrolled in your assigned courses.' },
+    { id: 2, title: 'Update course descriptions', body: 'Keep course information aligned with the backend course records.' },
+    { id: 3, title: 'Post announcement', body: 'Create a class update for your students.' },
+  ]
+
   return (
     <article className="portal-page">
       <PortalPageHeader
         eyebrow="Instructor"
         title="Instructor dashboard"
-        description="Simple instructor view based on backend users, instructor profiles, courses, and announcements."
+        description="Overview loaded from your account, courses, and announcements."
         actions={
           <Link to="/instructor/grades" className="portal-link">
             Open gradebook
@@ -39,10 +74,13 @@ export function StaffDashboard() {
         }
       />
 
+      {error ? <p className="portal-page__error">{error}</p> : null}
+      {loading ? <p className="portal-page__description">Loading…</p> : null}
+
       <PortalMetricGrid items={summary} />
 
       <PortalGrid>
-        <PortalSection title="Assigned courses" description="Sample records using backend course fields.">
+        <PortalSection title="Assigned courses" description="From the course endpoint.">
           <PortalList
             items={courseLoad}
             renderItem={(item) => (
@@ -57,7 +95,7 @@ export function StaffDashboard() {
           />
         </PortalSection>
 
-        <PortalSection title="Tasks" description="Simple instructor-side placeholders.">
+        <PortalSection title="Tasks" description="Quick prompts.">
           <PortalList
             items={tasks}
             renderItem={(item) => (

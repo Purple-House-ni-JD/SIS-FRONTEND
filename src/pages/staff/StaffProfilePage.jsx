@@ -1,30 +1,49 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { EditModal } from '../../components/common/EditModal'
 import { PortalGrid, PortalKeyValueList, PortalPageHeader, PortalSection } from '../../components/portal/PortalComponents'
-
-const identityItems = [
-  { label: 'Instructor name', value: 'Marco Santos' },
-  { label: 'Employee ID', value: 'EMP-204' },
-  { label: 'Department', value: 'School of Computing' },
-  { label: 'Role', value: 'Instructor' },
-]
-
-const coordinationItems = [
-  { label: 'School email', value: 'marco.santos@school.edu' },
-  { label: 'Office', value: 'Faculty Room B' },
-  { label: 'Consultation hours', value: 'Tue and Thu, 2:30 PM to 4:00 PM' },
-  { label: 'Advisory section', value: 'BSIT 2B' },
-]
+import { userDisplayName } from '../../lib/userDisplay'
+import { useMountLoad } from '../../lib/useMountLoad'
+import * as authService from '../../services/authService'
 
 export function StaffProfilePage() {
+  const [me, setMe] = useState(null)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
+
+  const load = useCallback(async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const user = await authService.fetchMe()
+      setMe(user)
+    } catch (e) {
+      setError(e.message || 'Failed to load profile')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useMountLoad(load)
+
+  const ip = me?.instructor_profile
+  const identityItems = me
+    ? [
+        { label: 'Instructor name', value: userDisplayName(me) },
+        { label: 'Employee ID', value: ip?.employee_id ?? '—' },
+        { label: 'Department', value: ip?.department ?? '—' },
+        { label: 'Role', value: me.role === 'instructor' ? 'Instructor' : me.role },
+      ]
+    : []
+
+  const coordinationItems = me ? [{ label: 'School email', value: me.email || '—' }] : []
 
   return (
     <article className="portal-page">
       <PortalPageHeader
         eyebrow="Instructor"
         title="Profile"
-        description="Simple profile view aligned with the backend instructor profile fields."
+        description="Information from your account. Name and email can be updated here; profile IDs are managed in the database."
         actions={
           <button type="button" className="portal-link portal-link--button" onClick={() => setIsEditing(true)}>
             Edit profile
@@ -32,12 +51,15 @@ export function StaffProfilePage() {
         }
       />
 
+      {error ? <p className="portal-page__error">{error}</p> : null}
+      {loading ? <p className="portal-page__description">Loading…</p> : null}
+
       <PortalGrid>
-        <PortalSection title="Identity details" description="Basic information attached to the instructor account.">
+        <PortalSection title="Identity details" description="Instructor account fields.">
           <PortalKeyValueList items={identityItems} />
         </PortalSection>
 
-        <PortalSection title="Coordination details" description="Useful for student concerns and internal communication.">
+        <PortalSection title="Contact" description="Account email.">
           <PortalKeyValueList items={coordinationItems} />
         </PortalSection>
       </PortalGrid>
@@ -46,24 +68,37 @@ export function StaffProfilePage() {
         isOpen={isEditing}
         title="Edit instructor profile"
         onClose={() => setIsEditing(false)}
-        onSubmit={() => setIsEditing(false)}
+        onSubmit={async (e) => {
+          const fd = new FormData(e.currentTarget)
+          try {
+            await authService.patchMe({
+              first_name: String(fd.get('first_name') || ''),
+              last_name: String(fd.get('last_name') || ''),
+              email: String(fd.get('email') || ''),
+            })
+            await load()
+            setIsEditing(false)
+          } catch (err) {
+            setError(err.message || 'Save failed')
+          }
+        }}
       >
-        <label className="static-modal__label">
-          Instructor name
-          <input className="static-modal__input" defaultValue="Marco Santos" />
-        </label>
-        <label className="static-modal__label">
-          Employee ID
-          <input className="static-modal__input" defaultValue="EMP-204" />
-        </label>
-        <label className="static-modal__label">
-          Department
-          <input className="static-modal__input" defaultValue="School of Computing" />
-        </label>
-        <label className="static-modal__label">
-          School email
-          <input className="static-modal__input" defaultValue="marco.santos@school.edu" />
-        </label>
+        {me ? (
+          <>
+            <label className="static-modal__label">
+              First name
+              <input className="static-modal__input" name="first_name" defaultValue={me.first_name || ''} />
+            </label>
+            <label className="static-modal__label">
+              Last name
+              <input className="static-modal__input" name="last_name" defaultValue={me.last_name || ''} />
+            </label>
+            <label className="static-modal__label">
+              School email
+              <input className="static-modal__input" name="email" type="email" defaultValue={me.email || ''} />
+            </label>
+          </>
+        ) : null}
       </EditModal>
     </article>
   )

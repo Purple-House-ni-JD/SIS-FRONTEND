@@ -1,24 +1,45 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { EditModal } from '../../components/common/EditModal'
+import { unwrapList } from '../../lib/apiClient'
+import { formatDate } from '../../lib/formatDate'
+import { useMountLoad } from '../../lib/useMountLoad'
+import * as announcementsService from '../../services/announcementsService'
 import './adminPages.css'
 
-const SAMPLE_ANNOUNCEMENTS = [
-  { id: 1, title: 'Enrollment period', author: 'Registrar', date: '2026-05-01' },
-  { id: 2, title: 'Campus maintenance', author: 'Admin', date: '2026-05-08' },
-]
-
 export function AdminAnnouncementsPage() {
-  const [editingAnnouncement, setEditingAnnouncement] = useState(null)
+  const [rows, setRows] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [editing, setEditing] = useState(null)
+  const [creating, setCreating] = useState(false)
+
+  const load = useCallback(async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const data = await announcementsService.listAnnouncements()
+      setRows(unwrapList(data))
+    } catch (e) {
+      setError(e.message || 'Failed to load')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useMountLoad(load)
 
   return (
     <article className="admin-page">
       <header className="admin-page__header">
         <h2 className="admin-page__title">Announcements</h2>
-        <p className="admin-page__lead">Simple announcement view aligned with backend title, content, created_by, and created_at fields.</p>
+        <p className="admin-page__lead">School announcements from the API.</p>
       </header>
 
+      {error ? <p className="admin-page__error">{error}</p> : null}
+      {loading ? <p className="admin-page__lead">Loading…</p> : null}
+
       <div className="admin-toolbar">
-        <button type="button" className="admin-btn admin-btn--primary">
+        <button type="button" className="admin-btn admin-btn--primary" onClick={() => setCreating(true)}>
           New announcement
         </button>
       </div>
@@ -34,21 +55,29 @@ export function AdminAnnouncementsPage() {
             </tr>
           </thead>
           <tbody>
-            {SAMPLE_ANNOUNCEMENTS.map((a) => (
+            {rows.map((a) => (
               <tr key={a.id}>
                 <td>{a.title}</td>
-                <td>{a.author}</td>
-                <td>{a.date}</td>
+                <td>{a.created_by_name}</td>
+                <td>{formatDate(a.created_at)}</td>
                 <td>
                   <div className="admin-table__actions">
-                    <button
-                      type="button"
-                      className="admin-btn admin-btn--ghost admin-btn--sm"
-                      onClick={() => setEditingAnnouncement(a)}
-                    >
+                    <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={() => setEditing(a)}>
                       Edit
                     </button>
-                    <button type="button" className="admin-btn admin-btn--danger admin-btn--sm">
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--danger admin-btn--sm"
+                      onClick={async () => {
+                        if (!window.confirm(`Delete “${a.title}”?`)) return
+                        try {
+                          await announcementsService.deleteAnnouncement(a.id)
+                          load()
+                        } catch (e) {
+                          setError(e.message || 'Delete failed')
+                        }
+                      }}
+                    >
                       Delete
                     </button>
                   </div>
@@ -60,27 +89,61 @@ export function AdminAnnouncementsPage() {
       </div>
 
       <EditModal
-        isOpen={Boolean(editingAnnouncement)}
-        title={editingAnnouncement ? `Edit ${editingAnnouncement.title}` : 'Edit announcement'}
-        onClose={() => setEditingAnnouncement(null)}
-        onSubmit={() => setEditingAnnouncement(null)}
+        isOpen={creating}
+        title="New announcement"
+        onClose={() => setCreating(false)}
+        onSubmit={async (e) => {
+          const fd = new FormData(e.currentTarget)
+          try {
+            await announcementsService.createAnnouncement({
+              title: String(fd.get('title') || '').trim(),
+              content: String(fd.get('content') || ''),
+            })
+            setCreating(false)
+            load()
+          } catch (err) {
+            setError(err.message || 'Create failed')
+          }
+        }}
       >
-        {editingAnnouncement ? (
+        <label className="static-modal__label">
+          Title
+          <input className="static-modal__input" name="title" required />
+        </label>
+        <label className="static-modal__label">
+          Content
+          <textarea className="static-modal__textarea" name="content" rows={4} required />
+        </label>
+      </EditModal>
+
+      <EditModal
+        isOpen={Boolean(editing)}
+        title={editing ? `Edit ${editing.title}` : 'Edit announcement'}
+        onClose={() => setEditing(null)}
+        onSubmit={async (e) => {
+          if (!editing) return
+          const fd = new FormData(e.currentTarget)
+          try {
+            await announcementsService.updateAnnouncement(editing.id, {
+              title: String(fd.get('title') || '').trim(),
+              content: String(fd.get('content') || ''),
+            })
+            setEditing(null)
+            load()
+          } catch (err) {
+            setError(err.message || 'Save failed')
+          }
+        }}
+      >
+        {editing ? (
           <>
             <label className="static-modal__label">
               Title
-              <input className="static-modal__input" defaultValue={editingAnnouncement.title} />
-            </label>
-            <label className="static-modal__label">
-              Created by
-              <input className="static-modal__input" defaultValue={editingAnnouncement.author} />
+              <input className="static-modal__input" name="title" defaultValue={editing.title} required />
             </label>
             <label className="static-modal__label">
               Content
-              <textarea
-                className="static-modal__textarea"
-                defaultValue={`Announcement preview for ${editingAnnouncement.title}.`}
-              />
+              <textarea className="static-modal__textarea" name="content" rows={4} defaultValue={editing.content} required />
             </label>
           </>
         ) : null}

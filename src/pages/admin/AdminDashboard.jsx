@@ -7,7 +7,7 @@ export function AdminDashboard() {
       <header className="admin-page__header">
         <h2 className="admin-page__title">Admin dashboard</h2>
         <p className="admin-page__lead">
-          Overview for administrators. Open a section below to manage users, courses, or announcements.
+          Overview for administrators. Open a section below to manage users, courses, enrollments, grades, or announcements.
         </p>
       </header>
 
@@ -21,6 +21,16 @@ export function AdminDashboard() {
           <p className="admin-dash-card__label">Manage</p>
           <h3 className="admin-dash-card__title">Grades</h3>
           <p className="admin-dash-card__text">Enrollment-based scores and remarks across all courses.</p>
+        </Link>
+        <Link to="/admin/enrollments" className="admin-dash-card">
+          <p className="admin-dash-card__label">Manage</p>
+          <h3 className="admin-dash-card__title">Enrollments</h3>
+          <p className="admin-dash-card__text">Assign students to courses.</p>
+        </Link>
+        <Link to="/admin/grades" className="admin-dash-card">
+          <p className="admin-dash-card__label">Manage</p>
+          <h3 className="admin-dash-card__title">Grades</h3>
+          <p className="admin-dash-card__text">Scores and remarks per enrollment.</p>
         </Link>
         <Link to="/admin/announcements" className="admin-dash-card">
           <p className="admin-dash-card__label">Manage</p>

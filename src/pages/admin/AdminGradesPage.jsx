@@ -53,10 +53,12 @@ export function AdminGradesPage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Title</th>
-              <th>Instructor</th>
-              <th>Created at</th>
+              <th>Enrollment</th>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Score</th>
+              <th>Remarks</th>
+              <th>Updated at</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -72,7 +74,7 @@ export function AdminGradesPage() {
                     <button
                       type="button"
                       className="admin-btn admin-btn--ghost admin-btn--sm"
-                      onClick={() => setEditingCourse(course)}
+                      onClick={() => setEditingGrade(grade)}
                     >
                       Edit
                     </button>
@@ -167,7 +169,7 @@ export function AdminGradesPage() {
           }
         }}
       >
-        {editingCourse ? (
+        {editingGrade ? (
           <>
             <label className="static-modal__label">
               Code

@@ -17,10 +17,10 @@ export function AdminDashboard() {
           <h3 className="admin-dash-card__title">User management</h3>
           <p className="admin-dash-card__text">Students, instructors, and admin accounts.</p>
         </Link>
-        <Link to="/admin/courses" className="admin-dash-card">
+        <Link to="/admin/grades" className="admin-dash-card">
           <p className="admin-dash-card__label">Manage</p>
-          <h3 className="admin-dash-card__title">Courses</h3>
-          <p className="admin-dash-card__text">Course code, title, description, and instructor assignment.</p>
+          <h3 className="admin-dash-card__title">Grades</h3>
+          <p className="admin-dash-card__text">Enrollment-based scores and remarks across all courses.</p>
         </Link>
         <Link to="/admin/enrollments" className="admin-dash-card">
           <p className="admin-dash-card__label">Manage</p>

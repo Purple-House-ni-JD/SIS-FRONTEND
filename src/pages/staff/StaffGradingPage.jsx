@@ -53,7 +53,7 @@ export function StaffGradingPage() {
       key: 'actions',
       label: 'Actions',
       render: (row) => (
-        <button type="button" className="portal-link portal-link--button" onClick={() => setEditingCourse(row)}>
+        <button type="button" className="portal-link portal-link--button" onClick={() => setEditingGrade(row)}>
           Edit
         </button>
       ),
@@ -105,7 +105,7 @@ export function StaffGradingPage() {
           }
         }}
       >
-        {editingCourse ? (
+        {editingGrade ? (
           <>
             <label className="static-modal__label">
               Code

@@ -27,7 +27,7 @@ export default function App() {
 
       <Route path="/student" element={<AppShell portal="student" title="Student" nav={portalNav.student} />}>
         <Route index element={<StudentDashboard />} />
-        <Route path="courses" element={<StudentGradesPage />} />
+        <Route path="grades" element={<StudentGradesPage />} />
         <Route path="announcements" element={<StudentAnnouncementsPage />} />
         <Route path="profile" element={<StudentProfilePage />} />
       </Route>

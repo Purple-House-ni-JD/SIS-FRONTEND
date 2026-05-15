@@ -68,8 +68,8 @@ export function StaffDashboard() {
         title="Instructor dashboard"
         description="Overview loaded from your account, courses, and announcements."
         actions={
-          <Link to="/instructor/courses" className="portal-link">
-            View courses
+          <Link to="/instructor/grades" className="portal-link">
+            Open gradebook
           </Link>
         }
       />

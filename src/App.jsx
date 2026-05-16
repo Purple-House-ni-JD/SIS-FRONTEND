@@ -4,7 +4,7 @@ import { ActivateAccountPage } from './pages/ActivateAccountPage'
 import { PublicHome } from './pages/PublicHome'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { AdminUsersPage } from './pages/admin/AdminUsersPage'
-import { AdminGradesPage } from './pages/admin/AdminGradesPage'
+import { AdminCoursePage } from './pages/admin/AdminCoursePage'
 import { AdminEnrollmentsPage } from './pages/admin/AdminEnrollmentsPage'
 import { AdminGradeRecordsPage } from './pages/admin/AdminGradeRecordsPage'
 import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage'
@@ -13,7 +13,7 @@ import { StudentGradesPage } from './pages/student/StudentGradesPage'
 import { StudentAnnouncementsPage } from './pages/student/StudentAnnouncementsPage'
 import { StudentProfilePage } from './pages/student/StudentProfilePage'
 import { StaffDashboard } from './pages/staff/StaffDashboard'
-import { StaffGradingPage } from './pages/staff/StaffGradingPage'
+import { StaffCoursePage } from './pages/staff/StaffCoursePage'
 import { StaffGradesPage } from './pages/staff/StaffGradesPage'
 import { StaffAnnouncementsPage } from './pages/staff/StaffAnnouncementsPage'
 import { StaffProfilePage } from './pages/staff/StaffProfilePage'
@@ -37,7 +37,7 @@ export default function App() {
         element={<AppShell portal="instructor" title="Instructor" nav={portalNav.instructor} />}
       >
         <Route index element={<StaffDashboard />} />
-        <Route path="courses" element={<StaffGradingPage />} />
+        <Route path="courses" element={<StaffCoursePage />} />
         <Route path="grades" element={<StaffGradesPage />} />
         <Route path="announcements" element={<StaffAnnouncementsPage />} />
         <Route path="profile" element={<StaffProfilePage />} />
@@ -46,7 +46,7 @@ export default function App() {
       <Route path="/admin" element={<AppShell portal="admin" title="Admin" nav={portalNav.admin} />}>
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsersPage />} />
-        <Route path="courses" element={<AdminGradesPage />} />
+        <Route path="courses" element={<AdminCoursePage />} />
         <Route path="enrollments" element={<AdminEnrollmentsPage />} />
         <Route path="grades" element={<AdminGradeRecordsPage />} />
         <Route path="announcements" element={<AdminAnnouncementsPage />} />

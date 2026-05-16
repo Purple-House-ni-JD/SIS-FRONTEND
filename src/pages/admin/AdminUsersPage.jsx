@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { EditModal } from "../../components/common/EditModal";
+import { PasswordModal } from "../../components/common/PasswordModal";
 import { unwrapList } from "../../lib/apiClient";
 import { userDisplayName } from "../../lib/userDisplay";
 import { useMountLoad } from "../../lib/useMountLoad";
@@ -48,6 +49,8 @@ export function AdminUsersPage() {
   const [createEmpId, setCreateEmpId] = useState("");
   const [editStudentId, setEditStudentId] = useState("");
   const [editEmpId, setEditEmpId] = useState("");
+  const [passwordUser, setPasswordUser] = useState(null);
+  const [passwordError, setPasswordError] = useState("");
 
   const load = useCallback(async () => {
     setError("");
@@ -134,6 +137,16 @@ export function AdminUsersPage() {
                       }}
                     >
                       Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--ghost admin-btn--sm"
+                      onClick={() => {
+                        setPasswordError("");
+                        setPasswordUser(u);
+                      }}
+                    >
+                      Change password
                     </button>
                     {!u.is_verified ? (
                       <button
@@ -579,6 +592,32 @@ export function AdminUsersPage() {
           </>
         ) : null}
       </EditModal>
+
+      <PasswordModal
+        isOpen={Boolean(passwordUser)}
+        title={
+          passwordUser
+            ? `Change password for ${userDisplayName(passwordUser)}`
+            : "Change password"
+        }
+        error={passwordError}
+        requireCurrent={false}
+        onClose={() => setPasswordUser(null)}
+        onSubmit={async (e) => {
+          if (!passwordUser) return;
+          const fd = new FormData(e.currentTarget);
+          try {
+            await usersService.setPasswordForUser(passwordUser.id, {
+              new_password: String(fd.get("new_password") || ""),
+              re_new_password: String(fd.get("re_new_password") || ""),
+            });
+            setPasswordUser(null);
+            load();
+          } catch (err) {
+            setPasswordError(err.message || "Failed to update password");
+          }
+        }}
+      />
     </article>
   );
 }

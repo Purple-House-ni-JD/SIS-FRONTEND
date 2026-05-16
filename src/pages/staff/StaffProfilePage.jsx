@@ -1,61 +1,98 @@
-import { useCallback, useState } from 'react'
-import { EditModal } from '../../components/common/EditModal'
-import { PortalGrid, PortalKeyValueList, PortalSection } from '../../components/portal/PortalComponents'
-import { userDisplayName } from '../../lib/userDisplay'
-import { useMountLoad } from '../../lib/useMountLoad'
-import * as authService from '../../services/authService'
+import { useCallback, useState } from "react";
+import { EditModal } from "../../components/common/EditModal";
+import { PasswordModal } from "../../components/common/PasswordModal";
+import {
+  PortalGrid,
+  PortalKeyValueList,
+  PortalPageHeader,
+  PortalSection,
+} from "../../components/portal/PortalComponents";
+import { userDisplayName } from "../../lib/userDisplay";
+import { useMountLoad } from "../../lib/useMountLoad";
+import * as authService from "../../services/authService";
 
 export function StaffProfilePage() {
-  const [me, setMe] = useState(null)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [isEditing, setIsEditing] = useState(false)
+  const [me, setMe] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPasswordOpen, setIsPasswordOpen] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
   const load = useCallback(async () => {
-    setError('')
-    setLoading(true)
+    setError("");
+    setLoading(true);
     try {
-      const user = await authService.fetchMe()
-      setMe(user)
+      const user = await authService.fetchMe();
+      setMe(user);
     } catch (e) {
-      setError(e.message || 'Failed to load profile')
+      setError(e.message || "Failed to load profile");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
-  useMountLoad(load)
+  useMountLoad(load);
 
-  const ip = me?.instructor_profile
+  const ip = me?.instructor_profile;
   const identityItems = me
     ? [
-        { label: 'Instructor name', value: userDisplayName(me) },
-        { label: 'Employee ID', value: ip?.employee_id ?? '—' },
-        { label: 'Department', value: ip?.department ?? '—' },
-        { label: 'Role', value: me.role === 'instructor' ? 'Instructor' : me.role },
+        { label: "Instructor name", value: userDisplayName(me) },
+        { label: "Employee ID", value: ip?.employee_id ?? "—" },
+        { label: "Department", value: ip?.department ?? "—" },
+        {
+          label: "Role",
+          value: me.role === "instructor" ? "Instructor" : me.role,
+        },
       ]
-    : []
+    : [];
 
-  const coordinationItems = me ? [{ label: 'School email', value: me.email || '—' }] : []
+  const coordinationItems = me
+    ? [{ label: "School email", value: me.email || "—" }]
+    : [];
 
   return (
     <article className="portal-page">
-      {/* <PortalPageHeader
+      <PortalPageHeader
         eyebrow="Instructor"
         title="Profile"
         description="Information from your account. Name and email can be updated here; profile IDs are managed in the database."
         actions={
-          <button type="button" className="portal-link portal-link--button" onClick={() => setIsEditing(true)}>
-            Edit profile
-          </button>
+          <>
+            {/* <button
+              type="button"
+              className="portal-link portal-link--button"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit profile
+            </button> */}
+            <button
+              type="button"
+              className="portal-link portal-link--button"
+              onClick={() => {
+                setPasswordError("");
+                setPasswordSuccess("");
+                setIsPasswordOpen(true);
+              }}
+            >
+              Change password
+            </button>
+          </>
         }
-      /> */}
+      />
 
       {error ? <p className="portal-page__error">{error}</p> : null}
       {loading ? <p className="portal-page__description">Loading…</p> : null}
 
+      {passwordSuccess ? (
+        <p className="portal-page__description">{passwordSuccess}</p>
+      ) : null}
       <PortalGrid>
-        <PortalSection title="Identity details" description="Instructor account fields.">
+        <PortalSection
+          title="Identity details"
+          description="Instructor account fields."
+        >
           <PortalKeyValueList items={identityItems} />
         </PortalSection>
 
@@ -64,22 +101,43 @@ export function StaffProfilePage() {
         </PortalSection>
       </PortalGrid>
 
+      <PasswordModal
+        isOpen={isPasswordOpen}
+        title="Change password"
+        error={passwordError}
+        onClose={() => setIsPasswordOpen(false)}
+        onSubmit={async (e) => {
+          const fd = new FormData(e.currentTarget);
+          try {
+            await authService.setPassword(
+              String(fd.get("current_password") || ""),
+              String(fd.get("new_password") || ""),
+              String(fd.get("re_new_password") || ""),
+            );
+            setPasswordSuccess("Password updated successfully.");
+            setIsPasswordOpen(false);
+          } catch (err) {
+            setPasswordError(err.message || "Failed to update password");
+          }
+        }}
+      />
+
       <EditModal
         isOpen={isEditing}
         title="Edit instructor profile"
         onClose={() => setIsEditing(false)}
         onSubmit={async (e) => {
-          const fd = new FormData(e.currentTarget)
+          const fd = new FormData(e.currentTarget);
           try {
             await authService.patchMe({
-              first_name: String(fd.get('first_name') || ''),
-              last_name: String(fd.get('last_name') || ''),
-              email: String(fd.get('email') || ''),
-            })
-            await load()
-            setIsEditing(false)
+              first_name: String(fd.get("first_name") || ""),
+              last_name: String(fd.get("last_name") || ""),
+              email: String(fd.get("email") || ""),
+            });
+            await load();
+            setIsEditing(false);
           } catch (err) {
-            setError(err.message || 'Save failed')
+            setError(err.message || "Save failed");
           }
         }}
       >
@@ -87,19 +145,32 @@ export function StaffProfilePage() {
           <>
             <label className="static-modal__label">
               First name
-              <input className="static-modal__input" name="first_name" defaultValue={me.first_name || ''} />
+              <input
+                className="static-modal__input"
+                name="first_name"
+                defaultValue={me.first_name || ""}
+              />
             </label>
             <label className="static-modal__label">
               Last name
-              <input className="static-modal__input" name="last_name" defaultValue={me.last_name || ''} />
+              <input
+                className="static-modal__input"
+                name="last_name"
+                defaultValue={me.last_name || ""}
+              />
             </label>
             <label className="static-modal__label">
               School email
-              <input className="static-modal__input" name="email" type="email" defaultValue={me.email || ''} />
+              <input
+                className="static-modal__input"
+                name="email"
+                type="email"
+                defaultValue={me.email || ""}
+              />
             </label>
           </>
         ) : null}
       </EditModal>
     </article>
-  )
+  );
 }

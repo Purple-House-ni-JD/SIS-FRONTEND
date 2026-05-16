@@ -49,15 +49,15 @@ export function StaffGradingPage() {
       label: 'Created at',
       render: (row) => formatDate(row.created_at),
     },
-    {
-      key: 'actions',
-      label: 'Actions',
-      render: (row) => (
-        <button type="button" className="portal-link portal-link--button" onClick={() => setEditingCourse(row)}>
-          Edit
-        </button>
-      ),
-    },
+    // {
+    //   key: 'actions',
+    //   label: 'Actions',
+    //   render: (row) => (
+    //     <button type="button" className="portal-link portal-link--button" onClick={() => setEditingCourse(row)}>
+    //       Edit
+    //     </button>
+    //   ),
+    // },
   ]
 
   return (

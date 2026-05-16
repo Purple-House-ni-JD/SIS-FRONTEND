@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { EditModal } from '../../components/common/EditModal'
-import { PortalGrid, PortalKeyValueList, PortalPageHeader, PortalSection } from '../../components/portal/PortalComponents'
+import { PortalGrid, PortalKeyValueList, PortalSection } from '../../components/portal/PortalComponents'
 import { userDisplayName } from '../../lib/userDisplay'
 import { useMountLoad } from '../../lib/useMountLoad'
 import * as authService from '../../services/authService'
@@ -40,7 +40,7 @@ export function StaffProfilePage() {
 
   return (
     <article className="portal-page">
-      <PortalPageHeader
+      {/* <PortalPageHeader
         eyebrow="Instructor"
         title="Profile"
         description="Information from your account. Name and email can be updated here; profile IDs are managed in the database."
@@ -49,7 +49,7 @@ export function StaffProfilePage() {
             Edit profile
           </button>
         }
-      />
+      /> */}
 
       {error ? <p className="portal-page__error">{error}</p> : null}
       {loading ? <p className="portal-page__description">Loading…</p> : null}

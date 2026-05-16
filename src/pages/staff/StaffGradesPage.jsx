@@ -189,7 +189,7 @@ export function StaffGradesPage() {
               Add grade
             </button>
           )}
-          <button
+          {/* <button
             type="button"
             className="portal-link portal-link--button"
             onClick={async () => {
@@ -203,7 +203,7 @@ export function StaffGradesPage() {
             }}
           >
             Unenroll
-          </button>
+          </button> */}
         </>
       ),
     },
@@ -214,7 +214,7 @@ export function StaffGradesPage() {
       <PortalPageHeader
         eyebrow="Instructor"
         title="Enrollments & grades"
-        description="Enroll students in your courses and record grades for your classes."
+        description="Enrolled students in your courses and record grades for your classes."
       />
 
       {error ? <p className="portal-page__error">{error}</p> : null}
@@ -223,11 +223,11 @@ export function StaffGradesPage() {
       <PortalSection
         title="Your enrollments"
         description="Students enrolled in courses you teach."
-        action={
-          <button type="button" className="portal-link portal-link--button" onClick={() => setEnrolling(true)}>
-            Enroll student
-          </button>
-        }
+        // action={
+        //   <button type="button" className="portal-link portal-link--button" onClick={() => setEnrolling(true)}>
+        //     Enroll student
+        //   </button>
+        // }
       >
         <PortalTable columns={columns} rows={rows} />
       </PortalSection>

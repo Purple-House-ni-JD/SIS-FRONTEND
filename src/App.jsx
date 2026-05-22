@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { AppShell } from './layouts/AppShell'
+// import { AppShell } from './layouts/AppShell'
 import { ActivateAccountPage } from './pages/ActivateAccountPage'
 import { PublicHome } from './pages/PublicHome'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
@@ -18,6 +18,7 @@ import { StaffGradesPage } from './pages/staff/StaffGradesPage'
 import { StaffAnnouncementsPage } from './pages/staff/StaffAnnouncementsPage'
 import { StaffProfilePage } from './pages/staff/StaffProfilePage'
 import { portalNav } from './data/portalConfig'
+import { ProtectedPortal } from './components/ProtectedPortal'
 
 export default function App() {
   return (
@@ -25,7 +26,7 @@ export default function App() {
       <Route path="/" element={<PublicHome />} />
       <Route path="/activate/:uid/:token" element={<ActivateAccountPage />} />
 
-      <Route path="/student" element={<AppShell portal="student" title="Student" nav={portalNav.student} />}>
+      <Route path="/student" element={<ProtectedPortal portal="student" title="Student" nav={portalNav.student} />}>
         <Route index element={<StudentDashboard />} />
         <Route path="grades" element={<StudentGradesPage />} />
         <Route path="announcements" element={<StudentAnnouncementsPage />} />
@@ -34,7 +35,7 @@ export default function App() {
 
       <Route
         path="/instructor"
-        element={<AppShell portal="instructor" title="Instructor" nav={portalNav.instructor} />}
+        element={<ProtectedPortal portal="instructor" title="Instructor" nav={portalNav.instructor} />}
       >
         <Route index element={<StaffDashboard />} />
         <Route path="courses" element={<StaffCoursePage />} />
@@ -43,7 +44,7 @@ export default function App() {
         <Route path="profile" element={<StaffProfilePage />} />
       </Route>
 
-      <Route path="/admin" element={<AppShell portal="admin" title="Admin" nav={portalNav.admin} />}>
+      <Route path="/admin" element={<ProtectedPortal portal="admin" title="Admin" nav={portalNav.admin} />}>
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="courses" element={<AdminCoursePage />} />
